@@ -1,0 +1,161 @@
+## ComfyUI-Manager: installing dependencies done.
+[2024-06-17 13:15] ** ComfyUI startup time: 2024-06-17 13:15:01.207797
+[2024-06-17 13:15] ** Platform: Linux
+[2024-06-17 13:15] ** Python version: 3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]
+[2024-06-17 13:15] ** Python executable: /home/mlfavorfit/anaconda3/envs/comfyui/bin/python3
+[2024-06-17 13:15] ** Log path: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/comfyui.log
+[2024-06-17 13:15] 
+Prestartup times for custom nodes:
+[2024-06-17 13:15]    0.1 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Manager
+[2024-06-17 13:15] 
+Total VRAM 24204 MB, total RAM 63416 MB
+[2024-06-17 13:15] pytorch version: 2.3.0+cu121
+[2024-06-17 13:15] Set vram state to: NORMAL_VRAM
+[2024-06-17 13:15] Device: cuda:0 Quadro RTX 6000 : cudaMallocAsync
+[2024-06-17 13:15] Using pytorch cross attention
+[2024-06-17 13:15] /home/mlfavorfit/anaconda3/envs/comfyui/lib/python3.12/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+[2024-06-17 13:15] ### Loading: ComfyUI-Impact-Pack (V5.5.11)
+[2024-06-17 13:15] ### Loading: ComfyUI-Impact-Pack (Subpack: V0.6)
+[2024-06-17 13:15] ------------------------------------------
+[2024-06-17 13:15] [34mComfyroll Studio v1.76 : [92m 175 Nodes Loaded[0m
+[2024-06-17 13:15] ------------------------------------------
+[2024-06-17 13:15] ** For changes, please see patch notes at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/blob/main/Patch_Notes.md
+[2024-06-17 13:15] ** For help, please see the wiki at https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes/wiki
+[2024-06-17 13:15] ------------------------------------------
+[2024-06-17 13:15] [36;20m[comfyui_controlnet_aux] | INFO -> Using ckpts path: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfyui_controlnet_aux/ckpts[0m
+[2024-06-17 13:15] [36;20m[comfyui_controlnet_aux] | INFO -> Using symlinks: False[0m
+[2024-06-17 13:15] [36;20m[comfyui_controlnet_aux] | INFO -> Using ort providers: ['CUDAExecutionProvider', 'DirectMLExecutionProvider', 'OpenVINOExecutionProvider', 'ROCMExecutionProvider', 'CPUExecutionProvider', 'CoreMLExecutionProvider'][0m
+[2024-06-17 13:15] [Impact Pack] Wildcards loading done.
+[2024-06-17 13:15] DWPose: Onnxruntime with acceleration providers detected
+[2024-06-17 13:15] A new version of Albumentations is available: 1.4.8 (you have 1.4.7). Upgrade using: pip install --upgrade albumentations
+[2024-06-17 13:15] [0;33m[ReActor][0m - [38;5;173mSTATUS[0m - [0;32mRunning v0.5.0-b3 in ComfyUI[0m
+[2024-06-17 13:15] Torch version: 2.3.0+cu121
+[2024-06-17 13:15] [34mFizzleDorf Custom Nodes: [92mLoaded[0m
+[2024-06-17 13:15] Total VRAM 24204 MB, total RAM 63416 MB
+[2024-06-17 13:15] pytorch version: 2.3.0+cu121
+[2024-06-17 13:15] Set vram state to: NORMAL_VRAM
+[2024-06-17 13:15] Device: cuda:0 Quadro RTX 6000 : cudaMallocAsync
+[2024-06-17 13:15] [34mWAS Node Suite: [0mOpenCV Python FFMPEG support is enabled[0m
+[2024-06-17 13:15] [34mWAS Node Suite [93mWarning: [0m`ffmpeg_bin_path` is not set in `/home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/was-node-suite-comfyui/was_suite_config.json` config file. Will attempt to use system ffmpeg binaries if available.[0m
+[2024-06-17 13:15] [34mWAS Node Suite: [0mFinished.[0m [32mLoaded[0m [0m212[0m [32mnodes successfully.[0m
+[2024-06-17 13:15] 
+	[3m[93m"Art is the freedom to create, explore, and inspire."[0m[3m - Unknown[0m
+[2024-06-17 13:15] 
+[2024-06-17 13:15] [AnimateDiffEvo] - [0;31mERROR[0m - No motion models found. Please download one and place in: ['/home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-AnimateDiff-Evolved/models', '/home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/models/animatediff_models']
+[2024-06-17 13:15] ### Loading: ComfyUI-Manager (V2.35.1)
+[2024-06-17 13:15] ### ComfyUI Revision: 2261 [6425252c] | Released on '2024-06-16'
+[2024-06-17 13:15] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/github-stats.json
+[2024-06-17 13:15] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/model-list.json
+[2024-06-17 13:15] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json
+[2024-06-17 13:15] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/custom-node-list.json
+[2024-06-17 13:15] [ComfyUI-Manager] default cache updated: https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/alter-list.json
+[2024-06-17 13:15] no module 'xformers'. Processing without...
+[2024-06-17 13:15] no module 'xformers'. Processing without...
+[2024-06-17 13:15] 
+Import times for custom nodes:
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/websocket_image_save.py
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/gcLatentTunnel.py
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Logic
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/cg-use-everywhere
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-post-processing-nodes
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/stability-ComfyUI-nodes
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/Comfyui_kandinsky22
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/sd-dynamic-thresholding
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_essentials
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfyui-animatediff
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyMath
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Custom-Scripts
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_UltimateSDUpscale
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfy-image-saver
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Frame-Interpolation
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Advanced-ControlNet
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-KJNodes
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-AnimateDiff-Evolved
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfyui_controlnet_aux
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_IPAdapter_plus
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_Comfyroll_CustomNodes
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Manager
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfyui_segment_anything
+[2024-06-17 13:15]    0.0 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_smZNodes
+[2024-06-17 13:15]    0.1 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-VideoHelperSuite
+[2024-06-17 13:15]    0.2 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI_FizzNodes
+[2024-06-17 13:15]    0.3 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-SUPIR
+[2024-06-17 13:15]    0.4 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/ComfyUI-Impact-Pack
+[2024-06-17 13:15]    0.5 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/Favorfit_custom
+[2024-06-17 13:15]    0.5 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/comfyui-reactor-node
+[2024-06-17 13:15]    0.8 seconds: /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/custom_nodes/was-node-suite-comfyui
+[2024-06-17 13:15] 
+[2024-06-17 13:15] Starting server
+
+[2024-06-17 13:15] To see the GUI go to: http://127.0.0.1:8188
+[2024-06-17 13:22] got prompt
+[2024-06-17 13:22] got prompt
+[2024-06-17 13:22] got prompt
+[2024-06-17 13:22] got prompt
+[2024-06-17 13:22] got prompt
+[2024-06-17 13:22] model_type EPS
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] Requested to load SD1ClipModel
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load AutoencoderKL
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load BaseModel
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 22/22 [00:01<00:00, 15.16it/s]
+[2024-06-17 13:22] Prompt executed in 2.79 seconds
+[2024-06-17 13:22] WARNING: comfy_extras.chainner_models is deprecated and has been replaced by the spandrel library.
+[2024-06-17 13:22] model_type EPS
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] The config attributes {'text_encoder': ['transformers', 'CLIPTextModel'], 'tokenizer': ['transformers', 'CLIPTokenizer']} were passed to KandinskyV22Pipeline, but are not expected and will be ignored. Please verify your model_index.json configuration file.
+[2024-06-17 13:22] Keyword arguments {'text_encoder': ['transformers', 'CLIPTextModel'], 'tokenizer': ['transformers', 'CLIPTokenizer']} are not expected by KandinskyV22Pipeline and will be ignored.
+[2024-06-17 13:22] Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00,  4.82it/s]
+[2024-06-17 13:22] The config attributes {'center_input_sample': False} were passed to ControlNetModel, but are not expected and will be ignored. Please verify your config.json configuration file.
+[2024-06-17 13:22] Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 6/6 [00:01<00:00,  5.81it/s]Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 6/6 [00:01<00:00,  5.49it/s]
+[2024-06-17 13:22] Loading pretrained ViT-L-14 from OpenAI.
+[2024-06-17 13:22] Requested to load SD1ClipModel
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load AutoencoderKL
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load ControlNet
+[2024-06-17 13:22] Requested to load BaseModel
+[2024-06-17 13:22] Loading 2 new models
+[2024-06-17 13:22] 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:01<00:00, 12.61it/s]100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:01<00:00, 12.38it/s]
+[2024-06-17 13:22] Prompt executed in 22.05 seconds
+[2024-06-17 13:22] model_type EPS
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] Using pytorch attention in VAE
+[2024-06-17 13:22] [33mINFO: Clip Vision model loaded from /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/models/clip_vision/CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors[0m
+[2024-06-17 13:22] [33mINFO: IPAdapter model loaded from /home/mlfavorfit/lib/favorfit/comfyui_server/comfyui_server/models/ipadapter/ip-adapter-plus_sdxl_vit-h.safetensors[0m
+[2024-06-17 13:22] [33mINFO: the IPAdapter reference image is not a square, CLIPImageProcessor will resize and crop it at the center. If the main focus of the picture is not in the middle the result might not be what you are expecting.[0m
+[2024-06-17 13:22] Requested to load CLIPVisionModelProjection
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load SDXLClipModel
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Requested to load SDXL
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 30/30 [00:09<00:00,  3.40it/s]100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 30/30 [00:09<00:00,  3.31it/s]
+[2024-06-17 13:22] Requested to load AutoencoderKL
+[2024-06-17 13:22] Loading 1 new model
+[2024-06-17 13:22] Prompt executed in 14.34 seconds
+[2024-06-17 13:22] The config attributes {'text_encoder': ['transformers', 'CLIPTextModel'], 'tokenizer': ['transformers', 'CLIPTokenizer']} were passed to KandinskyV22Pipeline, but are not expected and will be ignored. Please verify your model_index.json configuration file.
+[2024-06-17 13:22] Keyword arguments {'text_encoder': ['transformers', 'CLIPTextModel'], 'tokenizer': ['transformers', 'CLIPTokenizer']} are not expected by KandinskyV22Pipeline and will be ignored.
+[2024-06-17 13:22] Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:01<00:00,  2.29it/s]Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:01<00:00,  2.36it/s]
+[2024-06-17 13:22] The config attributes {'center_input_sample': False} were passed to ControlNetModel, but are not expected and will be ignored. Please verify your config.json configuration file.
+[2024-06-17 13:22] Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 6/6 [00:01<00:00,  5.77it/s]Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 6/6 [00:01<00:00,  5.41it/s]
+[2024-06-17 13:23] Prompt executed in 11.99 seconds
+[2024-06-17 13:23] model_type EPS
+[2024-06-17 13:23] Using pytorch attention in VAE
+[2024-06-17 13:23] Using pytorch attention in VAE
+[2024-06-17 13:23] Requested to load SD1ClipModel
+[2024-06-17 13:23] Loading 1 new model
+[2024-06-17 13:23] Requested to load BaseModel
+[2024-06-17 13:23] Loading 1 new model
+[2024-06-17 13:23] 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:01<00:00, 16.12it/s]100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:01<00:00, 15.91it/s]
+[2024-06-17 13:23] Requested to load AutoencoderKL
+[2024-06-17 13:23] Loading 1 new model
+[2024-06-17 13:23] Prompt executed in 2.30 seconds
+[2024-06-17 13:23] 
+Stopped server
