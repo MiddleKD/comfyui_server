@@ -119,8 +119,19 @@ class BridgeServer():
                 
                 task = asyncio.create_task(self.track_progress(sid))
 
+                timeout_count = 0
                 while True:
-                    out = await self.sockets_res[sid].receive()
+                    try:
+                        out = await self.sockets_res[sid].receive()
+                    except Exception as e:
+                        await self.send_socket_catch_exception(sid, {"status":"delayed", "details":str(e)})
+                        await asyncio.sleep(1)
+                        if timeout_count >= 10:
+                            raise TimeoutError(f"time out count exceed {timeout_count}")
+                        else:
+                            timeout_count += 1
+                            continue
+                    
                     out = out.data
 
                     if isinstance(out, str):
@@ -130,12 +141,10 @@ class BridgeServer():
                     if self.ws_connection_status[sid] == "closed":
                         break
                 
-                
             except aiohttp.ServerDisconnectedError as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
-            
             except Exception as e:
-                await self.send_socket_catch_exception(sid, {"status":"delayed", "details":str(e)})
+                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
             finally:
                 await task
