@@ -86,13 +86,6 @@ class BridgeServer():
                         }
                         await  self.send_socket_catch_exception(sid, completion_message)
                         break  # Execution is done
-            # elif out == None:
-            #     completion_message = {
-            #         'status': 'closed',
-            #         'details': 'comfy ui out is None'
-            #     }
-            #     await  self.send_socket_catch_exception(sid, completion_message)
-            #     break
             else:
                 continue
         return
@@ -119,19 +112,8 @@ class BridgeServer():
                 
                 task = asyncio.create_task(self.track_progress(sid))
 
-                timeout_count = 0
                 while True:
-                    try:
-                        out = await self.sockets_res[sid].receive()
-                    except Exception as e:
-                        await self.send_socket_catch_exception(sid, {"status":"delayed", "details":str(e)})
-                        await asyncio.sleep(5)
-                        if timeout_count >= 10:
-                            raise TimeoutError(f"time out count exceed {timeout_count}")
-                        else:
-                            timeout_count += 1
-                            continue
-                    
+                    out = await self.sockets_res[sid].receive()
                     out = out.data
 
                     if isinstance(out, str):
