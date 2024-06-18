@@ -109,7 +109,7 @@ class BridgeServer():
             self.sid_server_map[sid] = server_address
             
             ws_res = web.WebSocketResponse()
-            ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}", timeout=100)
+            ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}", autoclose=False)
 
             self.sockets_res[sid] = ws_res
             self.sockets_req[sid] = ws_req
