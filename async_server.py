@@ -112,11 +112,16 @@ class BridgeServer():
                 
                 task = asyncio.create_task(self.track_progress(sid))
 
+                timeout_count = 0
                 while True:
                     if self.ws_connection_status[sid] == "closed":
                         break
                     else:
                         await self.send_socket_catch_exception(sid, {"status":"listening", "details":"server is listening"})
+                        if timeout_count >= 30:
+                            raise TimeoutError(f"timeout count: {timeout_count}")
+                        timeout_count += 1
+
                     await asyncio.sleep(5)
 
             except aiohttp.ServerDisconnectedError as e:
