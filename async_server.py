@@ -106,7 +106,7 @@ class BridgeServer():
             server_address = await self.get_not_busy_server_address()
             self.sid_server_map[sid] = server_address
 
-            ws_res = web.WebSocketResponse(timeout=180) # middlek 이건 임시 타임아웃입니다.
+            ws_res = web.WebSocketResponse(timeout=500) # middlek 이건 임시 타임아웃입니다.
             ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}")
 
             self.sockets_res[sid] = ws_res
