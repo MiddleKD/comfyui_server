@@ -210,6 +210,6 @@ if __name__ == "__main__":
     else:
         wf_list = [os.path.join(workflow_dir, wf) for wf in args.wf_list]
     
-    ci_list = [uuid.uuid4() for _ in range(len(wf_list))]
+    ci_list = [str(uuid.uuid4()) for _ in range(len(wf_list))]
 
     asyncio.run(main(ci_list, wf_list, is_test=args.test))
