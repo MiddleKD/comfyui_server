@@ -136,8 +136,8 @@ class BridgeServer():
             except aiohttp.ServerDisconnectedError as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
             
-            # except Exception as e:
-            #     await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
+            except Exception as e:
+                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
             finally:
                 await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})

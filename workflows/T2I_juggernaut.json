@@ -27,7 +27,7 @@
     "class_type": "KSampler",
     "_meta": {
       "title": "KSampler",
-      "Favorfitinput": "seed"
+      "Favorfitinput": "seed,steps"
     }
   },
   "4": {
@@ -47,13 +47,12 @@
     },
     "class_type": "EmptyLatentImage",
     "_meta": {
-      "title": "Empty Latent Image",
-      "Favorfitinput": "width,height"
+      "title": "Empty Latent Image"
     }
   },
   "6": {
     "inputs": {
-      "text": "beautiful scenery nature glass bottle landscape, , purple galaxy bottle,",
+      "text": "beautiful scenery nature watch landscape, green and red galaxy style, art works",
       "clip": [
         "4",
         1
@@ -67,7 +66,7 @@
   },
   "7": {
     "inputs": {
-      "text": "text, watermark",
+      "text": "text, watermark, low quality",
       "clip": [
         "4",
         1
