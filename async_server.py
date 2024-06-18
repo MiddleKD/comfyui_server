@@ -135,7 +135,7 @@ class BridgeServer():
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
             
             except Exception as e:
-                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
+                await self.send_socket_catch_exception(sid, {"status":"delayed", "details":str(e)})
 
             finally:
                 await task
