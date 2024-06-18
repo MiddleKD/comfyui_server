@@ -124,7 +124,7 @@ class BridgeServer():
 
                 while True:
                     print(f"{sid} ws res receive")
-                    out = await ws_res.receive()
+                    out = await self.sockets_req[sid].receive()
                     out = out.data
 
                     if isinstance(out, str):
