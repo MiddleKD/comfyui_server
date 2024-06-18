@@ -86,13 +86,13 @@ class BridgeServer():
                         }
                         await  self.send_socket_catch_exception(sid, completion_message)
                         break  # Execution is done
-            elif out == None:
-                completion_message = {
-                    'status': 'closed',
-                    'details': 'comfy ui out is None'
-                }
-                await  self.send_socket_catch_exception(sid, completion_message)
-                break
+            # elif out == None:
+            #     completion_message = {
+            #         'status': 'closed',
+            #         'details': 'comfy ui out is None'
+            #     }
+            #     await  self.send_socket_catch_exception(sid, completion_message)
+            #     break
             else:
                 continue
         return
