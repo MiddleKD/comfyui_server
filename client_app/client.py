@@ -33,7 +33,7 @@ async def tracing(ws):
         if isinstance(out, str):
             message = json.loads(out)
         print(message)
-        # if message.get("status", None) == "closed": await ws.close()
+        if message.get("status", None) == "closed": break
 
 
 async def send_request(client_id, data):
