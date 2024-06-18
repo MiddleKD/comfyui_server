@@ -4,7 +4,7 @@ import aiohttp
 import aiofiles
 import magic
 
-server_address = "localhost:8080"
+server_address = "localhost:8000"
 
 # Assume mime type
 def get_mime_type(file_path):

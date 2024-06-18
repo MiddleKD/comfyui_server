@@ -87,13 +87,13 @@ class BridgeServer():
                         }
                         await  self.send_socket_catch_exception(sid, completion_message)
                         break  # Execution is done
-            # elif out == None:
-            #     completion_message = {
-            #         'status': 'closed',
-            #         'details': 'comfy ui out is None'
-            #     }
-            #     await  self.send_socket_catch_exception(sid, completion_message)
-            #     break
+            elif out == None:
+                completion_message = {
+                    'status': 'closed',
+                    'details': 'comfy ui out is None'
+                }
+                await  self.send_socket_catch_exception(sid, completion_message)
+                break
             else:
                 continue
         return
@@ -136,8 +136,8 @@ class BridgeServer():
             except aiohttp.ServerDisconnectedError as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
             
-            except Exception as e:
-                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
+            # except Exception as e:
+            #     await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
             finally:
                 await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})
