@@ -3,6 +3,7 @@ import asyncio
 import aiohttp
 import aiofiles
 import magic
+from pathlib import Path
 
 server_address = "localhost:8000"
 
@@ -175,12 +176,12 @@ Input:
                 elif info["type"] == "float":
                     user_input[key] = float(user_tipe)
                 else:
-                    user_tipe = str(user_tipe)
-                    if os.path.isfile(user_tipe):
-                        response_data = await upload_file(user_tipe)
-                        user_input[key] = response_data[user_tipe]
+                    user_tipe_str = str(user_tipe)
+                    if os.path.isfile(user_tipe_str):
+                        response_data = await upload_file(user_tipe_str)
+                        user_input[key] = response_data[user_tipe_str]
                     else:
-                        user_input[key] = user_tipe
+                        user_input[key] = user_tipe_str
     
         user_inputs.append(user_input)
 

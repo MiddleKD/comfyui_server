@@ -29,7 +29,7 @@ class BridgeServer():
             logging.warning(f"send error: {err} / {message}")
 
     async def init_app(self):
-        app = web.Application()
+        app = web.Application(client_max_size=1024**2*100)  # 업로드 용량 확인 middlek
         app.add_routes([
             web.post('/generate-based-workflow', self.generate_based_workflow),
             web.get('/ws', self.websocket_connection),
