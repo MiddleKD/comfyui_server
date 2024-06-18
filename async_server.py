@@ -45,6 +45,7 @@ class BridgeServer():
         
         while True:
             out = await self.sockets_req[sid].receive()
+            out2= out
             out = out.data
             
             if isinstance(out, str):
@@ -95,6 +96,7 @@ class BridgeServer():
             #     break
             else:
                 print(sid, out)
+                print(out2, type(out2))
                 continue
         return
 
