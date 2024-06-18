@@ -106,24 +106,21 @@ class BridgeServer():
             server_address = await self.get_not_busy_server_address()
             self.sid_server_map[sid] = server_address
 
-            ws_res = web.WebSocketResponse(timeout=500)
+            ws_res = web.WebSocketResponse(timeout=180) # middlek 이건 임시 타임아웃입니다.
             ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}")
 
             self.sockets_res[sid] = ws_res
             self.sockets_req[sid] = ws_req
 
             try:
-                print(f"{sid} ws connection prepare")
                 await self.sockets_res[sid].prepare(request)
 
                 await self.send_socket_catch_exception(sid, {"status":"connected", "details":"web socket connected"})
                 self.ws_connection_status[sid] = "connected"
                 
-                print(f"{sid} tracking start")
                 task = asyncio.create_task(self.track_progress(sid))
 
                 while True:
-                    print(f"{sid} ws res receive")
                     out = await self.sockets_res[sid].receive()
                     out = out.data
 
