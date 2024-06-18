@@ -203,12 +203,12 @@ if __name__ == "__main__":
     server_address = args.url
     print(f"AI server address is '{server_address}'")
     
-    workflow_dir = "./workflows"
+    workflow_dir = Path("./workflows")
 
     if args.test == True:
-        wf_list = [os.path.join(workflow_dir, wf) for wf in os.listdir("./test_wf")]
+        wf_list = [workflow_dir.joinpath(wf.name).as_posix() for wf in Path("./test_wf").iterdir()]
     else:
-        wf_list = [os.path.join(workflow_dir, wf) for wf in args.wf_list]
+        wf_list = [workflow_dir.joinpath(wf).as_posix() for wf in args.wf_list]
     
     ci_list = [str(uuid.uuid4()) for _ in range(len(wf_list))]
 
