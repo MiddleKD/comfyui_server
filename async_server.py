@@ -107,8 +107,8 @@ class BridgeServer():
         async with aiohttp.ClientSession() as session:
             server_address = await self.get_not_busy_server_address()
             self.sid_server_map[sid] = server_address
-
-            ws_res = web.WebSocketResponse() # middlek 이건 임시 타임아웃입니다.
+            print(self.sid_server_map)
+            ws_res = web.WebSocketResponse()
             ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}")
 
             self.sockets_res[sid] = ws_res
