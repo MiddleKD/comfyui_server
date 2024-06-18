@@ -113,14 +113,17 @@ class BridgeServer():
             self.sockets_req[sid] = ws_req
 
             try:
+                print(f"{sid} ws connection prepare")
                 await self.sockets_res[sid].prepare(request)
 
                 await self.send_socket_catch_exception(sid, {"status":"connected", "details":"web socket connected"})
                 self.ws_connection_status[sid] = "connected"
                 
+                print(f"{sid} tracking start")
                 task = asyncio.create_task(self.track_progress(sid))
 
                 while True:
+                    print(f"{sid} ws res receive")
                     out = await ws_res.receive()
                     out = out.data
 
@@ -136,8 +139,8 @@ class BridgeServer():
             except aiohttp.ServerDisconnectedError as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
             
-            except Exception as e:
-                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
+            # except Exception as e:
+            #     await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
             finally:
                 await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})
