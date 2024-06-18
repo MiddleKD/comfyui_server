@@ -93,7 +93,7 @@ class PromptServer():
 
         @routes.get('/ws')
         async def websocket_handler(request):
-            ws = web.WebSocketResponse(autoclose=500) # middlek 이건 임시 타임아웃입니다.
+            ws = web.WebSocketResponse(autoclose=False) # middlek 이건 임시 타임아웃입니다.
             await ws.prepare(request)
             sid = request.rel_url.query.get('clientId', '')
             if sid:
