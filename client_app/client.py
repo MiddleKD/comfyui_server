@@ -150,7 +150,6 @@ async def run_client(client_id, data):
 
     await send_request(client_id, data)
     await trace_log
-    await ws.close()
     await get_hisotry(client_id)
 
 

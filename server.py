@@ -33,8 +33,6 @@ class BinaryEventTypes:
 
 async def send_socket_catch_exception(function, message):
     try:
-        if message == None:
-            print({"status": "error", "data": "none_error"})
         await function(message)
     except (aiohttp.ClientError, aiohttp.ClientPayloadError, ConnectionResetError) as err:
         logging.warning("send error: {}".format(err))

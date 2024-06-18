@@ -94,7 +94,7 @@ class BridgeServer():
             #     await  self.send_socket_catch_exception(sid, completion_message)
             #     break
             else:
-                print(out)
+                print(sid, out)
                 continue
         return
 
