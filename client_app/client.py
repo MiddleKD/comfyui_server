@@ -39,7 +39,7 @@ async def tracing(ws):
 async def send_request(client_id, data):
     headers = {"Content-Type": "application/json"}
     try:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(1000)) as session:
             await session.post(
                 url=f'http://{server_address}/generate-based-workflow?clientId={client_id}',
                 headers=headers,
