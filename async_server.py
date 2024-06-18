@@ -146,14 +146,13 @@ class BridgeServer():
             except Exception as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
-            finally:
-                await task
-                await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})
-                await self.sockets_req[sid].close()
-                await self.sockets_res[sid].close()
-                self.sockets_req.pop(sid, None)
-                self.sockets_res.pop(sid, None)
-                self.ws_connection_status.pop(sid, None)
+            await task
+            await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})
+            await self.sockets_req[sid].close()
+            await self.sockets_res[sid].close()
+            self.sockets_req.pop(sid, None)
+            self.sockets_res.pop(sid, None)
+            self.ws_connection_status.pop(sid, None)
 
     async def get_not_busy_server_address(self):
         queue_lenghs = []
