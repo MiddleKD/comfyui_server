@@ -98,6 +98,7 @@ class PromptServer():
             sid = request.rel_url.query.get('clientId', '')
             if sid:
                 # Reusing existing session, remove old
+                logging.warning('idk sid error favorfit middlek.. %s' % ws.exception())
                 self.sockets.pop(sid, None)
             else:
                 sid = uuid.uuid4().hex
@@ -115,6 +116,7 @@ class PromptServer():
                     if msg.type == aiohttp.WSMsgType.ERROR:
                         logging.warning('ws connection closed with exception %s' % ws.exception())
             finally:
+                logging.warning('idk2 sid error favorfit middlek.. %s' % ws.exception())
                 self.sockets.pop(sid, None)
             return ws
 
