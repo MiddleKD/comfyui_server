@@ -99,7 +99,7 @@ def prompt_worker(q, server):
     e = execution.PromptExecutor(server)
     last_gc_collect = 0
     need_gc = False
-    gc_collect_interval = 100.0
+    gc_collect_interval = 10.0
 
     while True:
         timeout = 1000.0
