@@ -45,7 +45,6 @@ class BridgeServer():
         
         while True:
             out = await self.sockets_req[sid].receive()
-            out2= out
             out = out.data
             
             if isinstance(out, str):
@@ -95,8 +94,6 @@ class BridgeServer():
             #     await  self.send_socket_catch_exception(sid, completion_message)
             #     break
             else:
-                print(sid, out)
-                print(out2, type(out2))
                 continue
         return
 
@@ -107,9 +104,14 @@ class BridgeServer():
         async with aiohttp.ClientSession() as session:
             server_address = await self.get_not_busy_server_address()
             self.sid_server_map[sid] = server_address
+<<<<<<< HEAD
             
             ws_res = web.WebSocketResponse()
-            ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}", autoclose=False)
+=======
+
+            ws_res = web.WebSocketResponse() # middlek 이건 임시 타임아웃입니다.
+>>>>>>> parent of f5475bc (trouble shooting)
+            ws_req = await session.ws_connect(f"ws://{server_address}/ws?clientId={sid}")
 
             self.sockets_res[sid] = ws_res
             self.sockets_req[sid] = ws_req
