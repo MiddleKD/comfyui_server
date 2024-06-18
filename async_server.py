@@ -41,11 +41,10 @@ class BridgeServer():
         return app
     
     async def track_progress(self, sid):
-        ws_req = self.sockets_req[sid]
         finished_nodes = []
         
         while True:
-            out = await ws_req.receive()
+            out = await self.sockets_req[sid].receive()
             out = out.data
             
             if isinstance(out, str):
@@ -87,14 +86,15 @@ class BridgeServer():
                         }
                         await  self.send_socket_catch_exception(sid, completion_message)
                         break  # Execution is done
-            elif out == None:
-                completion_message = {
-                    'status': 'closed',
-                    'details': 'comfy ui out is None'
-                }
-                await  self.send_socket_catch_exception(sid, completion_message)
-                break
+            # elif out == None:
+            #     completion_message = {
+            #         'status': 'closed',
+            #         'details': 'comfy ui out is None'
+            #     }
+            #     await  self.send_socket_catch_exception(sid, completion_message)
+            #     break
             else:
+                print(out)
                 continue
         return
 
@@ -136,8 +136,8 @@ class BridgeServer():
             except aiohttp.ServerDisconnectedError as e:
                 await self.send_socket_catch_exception(sid, {"status":"error", "details":"server disconnected"})
             
-            # except Exception as e:
-            #     await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
+            except Exception as e:
+                await self.send_socket_catch_exception(sid, {"status":"error", "details":str(e)})
 
             finally:
                 await self.send_socket_catch_exception(sid, {"status":"closed", "details":"connection will be closed"})
