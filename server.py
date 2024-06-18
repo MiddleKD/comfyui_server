@@ -33,6 +33,8 @@ class BinaryEventTypes:
 
 async def send_socket_catch_exception(function, message):
     try:
+        if message == None:
+            print({"status": "error", "data": "none_error"})
         await function(message)
     except (aiohttp.ClientError, aiohttp.ClientPayloadError, ConnectionResetError) as err:
         logging.warning("send error: {}".format(err))
@@ -93,7 +95,7 @@ class PromptServer():
 
         @routes.get('/ws')
         async def websocket_handler(request):
-            ws = web.WebSocketResponse(autoclose=False) # middlek 이건 임시 타임아웃입니다.
+            ws = web.WebSocketResponse()
             await ws.prepare(request)
             sid = request.rel_url.query.get('clientId', '')
             if sid:
