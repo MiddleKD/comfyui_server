@@ -114,7 +114,7 @@ class BridgeServer():
 
                 timeout_count = 0
                 while True:
-                    if self.ws_connection_status[sid] == "closed":
+                    if self.ws_connection_status[sid] == "closed" or self.ws_connection_status[sid] == "error":
                         break
                     else:
                         await self.send_socket_catch_exception(sid, {"status":"listening", "details":"server is listening"})
