@@ -85,8 +85,14 @@
     "inputs": {
       "num_inference_steps": 20,
       "guidance_scale": 8,
-      "seed": 550370223430666,
-      "prompt": "product photo, professional photography, beautiful landscape, natural materials :: high detail, behance. polished, trending on textures. com, clean 3 d render, raytraced 3d set design, raytracing shadows, image on the store website",
+      "seed": [
+        "57",
+        0
+      ],
+      "prompt": [
+        "61",
+        0
+      ],
       "negative_prior": "low quality, worst quality, wrinkled, deformed, distorted, jpeg artifacts,nsfw, paintings, sketches, text, watermark, username, spikey",
       "text_encoder": [
         "12",
@@ -95,8 +101,7 @@
     },
     "class_type": "comfy-kandinsky22-text-encoder",
     "_meta": {
-      "title": "Kandinsky2.2 Text Encoder",
-      "Favorfitinput": "seed,prompt,negative_prior"
+      "title": "Kandinsky2.2 Text Encoder"
     }
   },
   "16": {
@@ -131,7 +136,10 @@
         "8",
         2
       ],
-      "seed": 539365995819067,
+      "seed": [
+        "57",
+        0
+      ],
       "movq": [
         "13",
         0
@@ -155,7 +163,10 @@
       "strength": 1,
       "num_inference_steps": 20,
       "guidance_scale": 2,
-      "seed": 118431456914217,
+      "seed": [
+        "57",
+        0
+      ],
       "decoder": [
         "13",
         1
@@ -271,7 +282,10 @@
   },
   "32": {
     "inputs": {
-      "seed": 842477950861808,
+      "seed": [
+        "57",
+        0
+      ],
       "steps": 20,
       "cfg": 8,
       "sampler_name": "dpmpp_2m_sde",
@@ -328,23 +342,10 @@
       "title": "CLIP Text Encode (Prompt)"
     }
   },
-  "40": {
-    "inputs": {
-      "dir_name": "clip",
-      "image": [
-        "21",
-        0
-      ]
-    },
-    "class_type": "FavorfitImageToText",
-    "_meta": {
-      "title": "Favorfit Image To Text"
-    }
-  },
   "41": {
     "inputs": {
       "text": [
-        "40",
+        "61",
         0
       ],
       "clip": [
@@ -444,6 +445,80 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
+    }
+  },
+  "57": {
+    "inputs": {
+      "seed": 665050971072069
+    },
+    "class_type": "CR Seed",
+    "_meta": {
+      "title": "🌱 CR Seed",
+      "Favorfitinput": "seed"
+    }
+  },
+  "58": {
+    "inputs": {
+      "wildcard_text": "__favorfit/bg_prefix__",
+      "populated_text": "",
+      "mode": true,
+      "seed": [
+        "57",
+        0
+      ],
+      "Select to add Wildcard": "Select the Wildcard to add to the text"
+    },
+    "class_type": "ImpactWildcardProcessor",
+    "_meta": {
+      "title": "ImpactWildcardProcessor"
+    }
+  },
+  "59": {
+    "inputs": {
+      "wildcard_text": "__favorfit/bg_concepts__, __favorfit/bg_postfix__",
+      "populated_text": "",
+      "mode": true,
+      "seed": [
+        "57",
+        0
+      ],
+      "Select to add Wildcard": "Select the Wildcard to add to the text"
+    },
+    "class_type": "ImpactWildcardProcessor",
+    "_meta": {
+      "title": "ImpactWildcardProcessor"
+    }
+  },
+  "60": {
+    "inputs": {
+      "string": ","
+    },
+    "class_type": "String to Text",
+    "_meta": {
+      "title": "String to Text",
+      "Favorfitinput": "string"
+    }
+  },
+  "61": {
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "false",
+      "text_a": [
+        "58",
+        0
+      ],
+      "text_b": [
+        "60",
+        0
+      ],
+      "text_c": [
+        "59",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate",
+    "_meta": {
+      "title": "Text Concatenate"
     }
   }
 }

@@ -1,0 +1,268 @@
+{
+  "36": {
+    "inputs": {
+      "ckpt_name": "realisticVisionV60B1_v51HyperVAE.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "39": {
+    "inputs": {
+      "model_path": "dynamicrafter_unet_512_interp.safetensors"
+    },
+    "class_type": "DynamiCrafterLoader",
+    "_meta": {
+      "title": "Load a DynamiCrafter Checkpoint"
+    }
+  },
+  "40": {
+    "inputs": {
+      "use_interpolate": true,
+      "fps": 8,
+      "frames": 16,
+      "scale_latents": true,
+      "model": [
+        "39",
+        0
+      ],
+      "clip_vision": [
+        "43",
+        0
+      ],
+      "vae": [
+        "36",
+        2
+      ],
+      "image_proj_model": [
+        "39",
+        1
+      ],
+      "images": [
+        "60",
+        0
+      ]
+    },
+    "class_type": "DynamiCrafterProcessor",
+    "_meta": {
+      "title": "Apply DynamiCrafter"
+    }
+  },
+  "43": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-fp16.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "44": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "CLIP Set Last Layer"
+    }
+  },
+  "45": {
+    "inputs": {
+      "clip_name": "stable-diffusion-2-1-clip-fp16.safetensors",
+      "type": "stable_diffusion"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "47": {
+    "inputs": {
+      "seed": 400243956761769,
+      "steps": 15,
+      "cfg": 12,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "sgm_uniform",
+      "denoise": 1,
+      "model": [
+        "40",
+        0
+      ],
+      "positive": [
+        "50",
+        0
+      ],
+      "negative": [
+        "51",
+        0
+      ],
+      "latent_image": [
+        "40",
+        1
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler",
+      "Favorfitinput": "seed"
+    }
+  },
+  "48": {
+    "inputs": {
+      "samples": [
+        "47",
+        0
+      ],
+      "vae": [
+        "36",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "49": {
+    "inputs": {
+      "frame_rate": 12,
+      "loop_count": 0,
+      "filename_prefix": "Video",
+      "format": "video/nvenc_hevc-mp4",
+      "pix_fmt": "yuv420p",
+      "bitrate": 10,
+      "megabit": true,
+      "save_metadata": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "50": {
+    "inputs": {
+      "text": "(slow motion:1.25), 4k high definition video",
+      "clip": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)",
+      "Favorfitinput": "text"
+    }
+  },
+  "51": {
+    "inputs": {
+      "text": "bad quality, blurry, boring",
+      "clip": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "59": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "width": 1024,
+      "height": 640,
+      "crop": "center",
+      "image": [
+        "78",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "60": {
+    "inputs": {
+      "image1": [
+        "59",
+        0
+      ],
+      "image2": [
+        "83",
+        0
+      ]
+    },
+    "class_type": "ImageBatch",
+    "_meta": {
+      "title": "Batch Images"
+    }
+  },
+  "78": {
+    "inputs": {
+      "image": "i2v_example.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image",
+      "Favorfitinput": "image"
+    }
+  },
+  "82": {
+    "inputs": {
+      "image": "i2v_example.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image",
+      "Favorfitinput": "image"
+    }
+  },
+  "83": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "width": 1024,
+      "height": 640,
+      "crop": "center",
+      "image": [
+        "82",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "84": {
+    "inputs": {
+      "ckpt_name": "rife47.pth",
+      "clear_cache_after_n_frames": 10,
+      "multiplier": 3,
+      "fast_mode": true,
+      "ensemble": true,
+      "scale_factor": 1,
+      "frames": [
+        "48",
+        0
+      ]
+    },
+    "class_type": "RIFE VFI",
+    "_meta": {
+      "title": "RIFE VFI (recommend rife47 and rife49)"
+    }
+  }
+}
