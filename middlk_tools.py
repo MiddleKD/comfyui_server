@@ -33,6 +33,13 @@ def log_parameters_to_json(file_name="parameters.json"):
     with open(file_name, 'w') as f:
         json.dump(detailed_params, f, indent=4)
 
+import json
+def save_json_to_check(json_like, file_name="tocheck.json"):
+    with open(file_name, mode="a") as f:
+        json_str = json.dumps(json_like, indent=4)
+        f.write(json_str + "\n")
+    return True
+
 
 import tracemalloc
 def trace_memory():

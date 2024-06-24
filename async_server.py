@@ -1,5 +1,6 @@
 from ai_api import (queue_prompt,
                     get_history,
+                    delete_history,
                     get_queue_state,
                     get_parsed_input_nodes,
                     parse_workflow_prompt,
@@ -14,18 +15,20 @@ import json, os
 class BridgeServer():
     
     def __init__(self, loop, server_address:list) -> None:
+        self.loop = loop
         self.sockets_res = {}
         self.sockets_req = {}
         self.sid_server_map = {}
+        self.wf_info = {}
         self.ws_connection_status = {}
-        self.loop = loop
         self.server_address = server_address
-        
+
     async def send_socket_catch_exception(self, sid, message):
         try:
             await self.sockets_res[sid].send_json(message)
             self.ws_connection_status[sid] = message.get("status", None)
         except (aiohttp.ClientError, aiohttp.ClientPayloadError, ConnectionResetError) as err:
+            self.ws_connection_status[sid] = "error"
             logging.warning(f"send error: {err} / {message}")
 
     async def init_app(self):
@@ -41,53 +44,56 @@ class BridgeServer():
         return app
     
     async def track_progress(self, sid):
-        finished_nodes = []
-        
+        total_progress = 0
+        cur_progress = 0
         while True:
             out = await self.sockets_req[sid].receive()
             out = out.data
-            
+
+            if self.ws_connection_status[sid] == "closed" or self.ws_connection_status[sid] == "error":
+                # await self.sockets_req[sid].send_str("interrupt")
+                break
+
             if isinstance(out, str):
                 message = json.loads(out)
-                if message['type'] == 'progress':
-                    data = message['data']
-                    current_step = data['value']
+
+                if message['type'] == 'execution_start':
+                    wf_info = self.wf_info.get(sid, None)
+                    inputs_infos = [cur.get("inputs", None) for cur in wf_info.values()]
+                    steps_list = [value for inputs_info in inputs_infos
+                        for key, value in inputs_info.items()
+                        if "steps" in key]
+                    total_progress += (len(wf_info) + sum(steps_list))
                     progress_message = {
-                        'status': 'progress_update',
-                        'details': f'In K-Sampler -> Step: {current_step} of {data["max"]}'
+                        'status': 'progress',
+                        'details': f'{cur_progress/total_progress*100:.2f}%'
                     }
                     await self.send_socket_catch_exception(sid, progress_message)
-
-                if message['type'] == 'execution_cached':
+                
+                if message['type'] in ('progress', 'executing'):
                     data = message['data']
-                    for itm in data['nodes']:
-                        if itm not in finished_nodes:
-                            finished_nodes.append(itm)
-                            progress_message = {
-                                'status': 'progress_update',
-                                'details': f'Progress: {len(finished_nodes)} / {len(data['nodes'])} Tasks done'
-                            }
-                            await  self.send_socket_catch_exception(sid, progress_message)
-
-                if message['type'] == 'executing':
-                    data = message['data']
-                    if data['node'] not in finished_nodes:
-                        finished_nodes.append(data['node'])
-                        progress_message = {
-                            'status': 'progress_update',
-                            'details': f'Progress: {len(finished_nodes)} / ) Tasks done'
-                        }
-                        await  self.send_socket_catch_exception(sid, progress_message)
 
                     if data['node'] is None and data['prompt_id'] == sid:
-                        completion_message = {
+                        progress_message = {
                             'status': 'closed',
                             'details': 'Execution is done'
                         }
-                        await  self.send_socket_catch_exception(sid, completion_message)
-                        break  # Execution is done
-            elif self.ws_connection_status[sid] == "closed" or self.ws_connection_status[sid] == "error":
-                break
+                    else:
+                        cur_progress += 1
+                        progress_message = {
+                            'status': 'progress',
+                            'details': f'{cur_progress/total_progress*100:.2f}%'
+                        }
+                    await self.send_socket_catch_exception(sid, progress_message)
+
+                if message['type'] == 'execution_cached':
+                    cached_nodes = message['data']['nodes']
+                    cur_progress += len(cached_nodes)
+                    progress_message = {
+                        'status': 'progress',
+                        'details': f'{cur_progress/total_progress*100:.2f}%'
+                    }
+                    await self.send_socket_catch_exception(sid, progress_message)
             else:
                 continue
         return
@@ -163,6 +169,7 @@ class BridgeServer():
         kwargs = data
     
         prompt = parse_workflow_prompt(workflow, **kwargs)
+        self.wf_info[sid] = prompt
         prompt = queue_prompt(prompt, sid, self.sid_server_map[sid])
 
         return web.Response(status=200)
@@ -188,6 +195,7 @@ class BridgeServer():
         sid = request.rel_url.query.get('clientId', '')
 
         history = get_history(sid, self.sid_server_map[sid])
+        delete_history(sid, self.sid_server_map[sid])
         history = history.get(sid, None)
         self.sid_server_map.pop(sid, None)
 

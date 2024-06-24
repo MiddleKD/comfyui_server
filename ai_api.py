@@ -36,6 +36,22 @@ def get_history(client_id, server_address):
     with urllib.request.urlopen(f"http://{server_address}/history/{client_id}") as response:
         return json.loads(response.read())
 
+def delete_history(client_id, server_address):
+    url = f"http://{server_address}/history"
+    data = json.dumps({"delete": client_id}).encode('utf-8')
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    request = urllib.request.Request(url, data=data, headers=headers, method='POST')
+    with urllib.request.urlopen(request) as response:
+        return response.status
+    
+def send_interrupt(server_address):
+    url = f"http://{server_address}/interrupt/"
+    request = urllib.request.Request(url, method='POST')
+    with urllib.request.urlopen(request) as response:
+        return json.loads(response.read())
+
 def upload_image(file_data, name, server_address, image_type="input", overwrite=False):
 
     mime_type = get_mime_type_from_binary(file_data)

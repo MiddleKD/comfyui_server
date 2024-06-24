@@ -103,7 +103,7 @@ class PromptServer():
                 sid = uuid.uuid4().hex
 
             self.sockets[sid] = ws
-
+            
             try:
                 # Send initial state to the new client
                 await self.send("status", { "status": self.get_queue_info(), 'sid': sid }, sid)
@@ -623,6 +623,8 @@ class PromptServer():
                 await send_socket_catch_exception(ws.send_json, message)
         elif sid in self.sockets:
             await send_socket_catch_exception(self.sockets[sid].send_json, message)
+        elif sid not in self.sockets:
+            nodes.interrupt_processing() # middlek
 
     def send_sync(self, event, data, sid=None):
         self.loop.call_soon_threadsafe(
