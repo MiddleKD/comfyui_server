@@ -217,7 +217,7 @@
   "100": {
     "inputs": {
       "target_size": -1,
-      "max_size": 2048,
+      "max_size": 1024,
       "min_size": 512,
       "image": [
         "72",

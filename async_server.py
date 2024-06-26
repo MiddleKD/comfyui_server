@@ -27,7 +27,7 @@ class BridgeServer():
         try:
             await self.sockets_res[sid].send_json(message)
             self.ws_connection_status[sid] = message.get("status", None)
-        except (aiohttp.ClientError, aiohttp.ClientPayloadError, ConnectionResetError) as err:
+        except Exception as err:
             self.ws_connection_status[sid] = "error"
             logging.warning(f"send error: {err} / {message}")
 
