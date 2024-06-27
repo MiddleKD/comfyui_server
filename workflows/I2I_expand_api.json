@@ -1,7 +1,7 @@
 {
   "9": {
     "inputs": {
-      "text": ",",
+      "text": "",
       "clip": [
         "19",
         1
@@ -9,8 +9,7 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "CLIP Text Encode (Prompt)",
-      "Favorfitinput": "text"
+      "title": "CLIP Text Encode (Prompt)"
     }
   },
   "10": {
@@ -60,36 +59,6 @@
     "_meta": {
       "title": "Load Image",
       "Favorfitinput": "image"
-    }
-  },
-  "35": {
-    "inputs": {
-      "head": "fooocus_inpaint_head.pth",
-      "patch": "inpaint_v26.fooocus.patch"
-    },
-    "class_type": "INPAINT_LoadFooocusInpaint",
-    "_meta": {
-      "title": "Load Fooocus Inpaint"
-    }
-  },
-  "36": {
-    "inputs": {
-      "model": [
-        "297",
-        0
-      ],
-      "patch": [
-        "35",
-        0
-      ],
-      "latent": [
-        "44",
-        2
-      ]
-    },
-    "class_type": "INPAINT_ApplyFooocusInpaint",
-    "_meta": {
-      "title": "Apply Fooocus Inpaint"
     }
   },
   "40": {
@@ -366,7 +335,7 @@
   "412": {
     "inputs": {
       "model": [
-        "36",
+        "1070",
         0
       ]
     },
@@ -1296,6 +1265,24 @@
     "_meta": {
       "title": "Image Pad For Outpaint Target Size",
       "Favorfitinput": "target_width,target_height"
+    }
+  },
+  "1070": {
+    "inputs": {
+      "head": "fooocus_inpaint_head",
+      "patch": "inpaint_v26 (1.32GB)",
+      "model": [
+        "297",
+        0
+      ],
+      "latent": [
+        "44",
+        2
+      ]
+    },
+    "class_type": "easy applyFooocusInpaint",
+    "_meta": {
+      "title": "Easy Apply Fooocus Inpaint"
     }
   }
 }

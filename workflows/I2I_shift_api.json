@@ -61,36 +61,6 @@
       "Favorfitinput": "image"
     }
   },
-  "35": {
-    "inputs": {
-      "head": "fooocus_inpaint_head.pth",
-      "patch": "inpaint_v26.fooocus.patch"
-    },
-    "class_type": "INPAINT_LoadFooocusInpaint",
-    "_meta": {
-      "title": "Load Fooocus Inpaint"
-    }
-  },
-  "36": {
-    "inputs": {
-      "model": [
-        "297",
-        0
-      ],
-      "patch": [
-        "35",
-        0
-      ],
-      "latent": [
-        "44",
-        2
-      ]
-    },
-    "class_type": "INPAINT_ApplyFooocusInpaint",
-    "_meta": {
-      "title": "Apply Fooocus Inpaint"
-    }
-  },
   "40": {
     "inputs": {
       "seed": 0,
@@ -365,7 +335,7 @@
   "412": {
     "inputs": {
       "model": [
-        "36",
+        "1074",
         0
       ]
     },
@@ -1338,6 +1308,24 @@
     "class_type": "ImageScaleBy",
     "_meta": {
       "title": "Upscale Image By"
+    }
+  },
+  "1074": {
+    "inputs": {
+      "head": "fooocus_inpaint_head",
+      "patch": "inpaint_v26 (1.32GB)",
+      "model": [
+        "297",
+        0
+      ],
+      "latent": [
+        "44",
+        2
+      ]
+    },
+    "class_type": "easy applyFooocusInpaint",
+    "_meta": {
+      "title": "Easy Apply Fooocus Inpaint"
     }
   }
 }
