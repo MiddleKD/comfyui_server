@@ -166,7 +166,7 @@
   "40": {
     "inputs": {
       "model": [
-        "4",
+        "112",
         0
       ],
       "ic_model": [
@@ -387,7 +387,7 @@
   },
   "65": {
     "inputs": {
-      "filename_prefix": "text",
+      "filename_prefix": "refstyle",
       "images": [
         "66",
         0
@@ -645,6 +645,18 @@
     "class_type": "Text Concatenate",
     "_meta": {
       "title": "Text Concatenate"
+    }
+  },
+  "112": {
+    "inputs": {
+      "model": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ResetModelPatcherCalculateWeight",
+    "_meta": {
+      "title": "Favorfit reset modelpatcher to original calculate weight"
     }
   }
 }

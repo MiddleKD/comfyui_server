@@ -18,8 +18,7 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "CLIP Text Encode (Prompt)",
-      "Favorfitinput": "text"
+      "title": "CLIP Text Encode (Prompt)"
     }
   },
   "7": {
@@ -164,7 +163,7 @@
   "40": {
     "inputs": {
       "model": [
-        "4",
+        "101",
         0
       ],
       "ic_model": [
@@ -653,6 +652,18 @@
     "class_type": "FavorfitResizeDiffusionAvailable",
     "_meta": {
       "title": "Favorfit Resize Dif Avail"
+    }
+  },
+  "101": {
+    "inputs": {
+      "model": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ResetModelPatcherCalculateWeight",
+    "_meta": {
+      "title": "Favorfit reset modelpatcher to original calculate weight"
     }
   }
 }
