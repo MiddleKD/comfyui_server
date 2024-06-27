@@ -38,8 +38,9 @@ class BridgeServer():
             web.get('/ws', self.websocket_connection),
             web.get("/", self.main_page),
             web.get("/history", self.get_history),
+            web.get("/workflow-list", self.get_workflow_list),
             web.post("/upload/image", self.upload_image),
-            web.post("/workflow-info", self.workflow_info)
+            web.post("/workflow-info", self.workflow_info),
         ])
         return app
     
@@ -234,6 +235,10 @@ class BridgeServer():
         node_info = get_parsed_input_nodes(workflow)
 
         return web.Response(status=200, body=json.dumps(node_info), content_type="application/json")
+    
+    async def get_workflow_list(self, request):
+        wf_list = os.listdir("./workflows")
+        return web.Response(status=200, body=json.dumps(wf_list), content_type="application/json")
 
     async def main_page(self, request):
         return web.Response(text="Hello, this is Favorfit Bridge Server!")
