@@ -88,7 +88,8 @@
     },
     "class_type": "KSampler",
     "_meta": {
-      "title": "KSampler"
+      "title": "KSampler",
+      "Favorfitinput": "seed"
     }
   },
   "44": {
@@ -698,8 +699,7 @@
     },
     "class_type": "GlobalSeed //Inspire",
     "_meta": {
-      "title": "Global Seed (Inspire)",
-      "Favorfitinput": "value"
+      "title": "Global Seed (Inspire)"
     }
   },
   "829": {
