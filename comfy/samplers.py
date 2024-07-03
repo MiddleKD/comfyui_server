@@ -283,32 +283,14 @@ class KSamplerX0Inpaint:
         self.inner_model = model
         self.sigmas = sigmas
     def __call__(self, x, sigma, denoise_mask, model_options={}, seed=None):
-        image_inject_options = model_options.get("is_image_inject") # middlek
-        if image_inject_options is not None:
-            start_sigma = image_inject_options["start_sigma"]
-            end_sigma = image_inject_options["end_sigma"]
-
         if denoise_mask is not None:
             if "denoise_mask_function" in model_options:
                 denoise_mask = model_options["denoise_mask_function"](sigma, denoise_mask, extra_options={"model": self.inner_model, "sigmas": self.sigmas})
-            
-            if image_inject_options is not None:    # middlek
-                if sigma.item() > end_sigma and sigma.item() < start_sigma:
-                    latent_mask = 1. - denoise_mask
-                    scaled_latent = self.inner_model.inner_model.model_sampling.noise_scaling(sigma.reshape([sigma.shape[0]] + [1] * (len(self.noise.shape) - 1)), self.noise, self.latent_image)
-                    x = x * denoise_mask + scaled_latent * latent_mask
-            else:
-                latent_mask = 1. - denoise_mask
-                x = x * denoise_mask + self.inner_model.inner_model.model_sampling.noise_scaling(sigma.reshape([sigma.shape[0]] + [1] * (len(self.noise.shape) - 1)), self.noise, self.latent_image) * latent_mask
-        
+            latent_mask = 1. - denoise_mask
+            x = x * denoise_mask + self.inner_model.inner_model.model_sampling.noise_scaling(sigma.reshape([sigma.shape[0]] + [1] * (len(self.noise.shape) - 1)), self.noise, self.latent_image) * latent_mask
         out = self.inner_model(x, sigma, model_options=model_options, seed=seed)
-        
-        if denoise_mask is not None:    # middlek
-            if image_inject_options is not None:
-                pass
-            else:
-                out = out * denoise_mask + self.latent_image * latent_mask
-        
+        if denoise_mask is not None:
+            out = out * denoise_mask + self.latent_image * latent_mask
         return out
 
 def simple_scheduler(model_sampling, steps):
@@ -673,7 +655,7 @@ class CFGGuider:
     def inner_sample(self, noise, latent_image, device, sampler, sigmas, denoise_mask, callback, disable_pbar, seed):
         if latent_image is not None and torch.count_nonzero(latent_image) > 0: #Don't shift the empty latent image.
             latent_image = self.inner_model.process_latent_in(latent_image)
-
+        
         self.conds = process_conds(self.inner_model, noise, self.conds, device, latent_image, denoise_mask, seed)
 
         extra_args = {"model_options": self.model_options, "seed":seed}
