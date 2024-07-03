@@ -5,7 +5,8 @@ from ai_api import (queue_prompt,
                     get_parsed_input_nodes,
                     parse_workflow_prompt,
                     parse_outputs,
-                    save_binary_file)
+                    save_binary_file,
+                    AsyncJsonWrapper)
 import asyncio
 import aiohttp
 import logging
@@ -14,7 +15,7 @@ import json, os
 
 class BridgeServer():
     
-    def __init__(self, loop, server_address:list) -> None:
+    def __init__(self, loop, config_fn,server_address:list) -> None:
         self.loop = loop
         self.sockets_res = {}
         self.sockets_req = {}
@@ -22,6 +23,8 @@ class BridgeServer():
         self.wf_info = {}
         self.ws_connection_status = {}
         self.server_address = server_address
+
+        self.config_obj = AsyncJsonWrapper(config_fn)
 
     async def send_socket_catch_exception(self, sid, message):
         try:
@@ -40,9 +43,12 @@ class BridgeServer():
             web.get("/", self.main_page),
             web.get("/history", self.get_history),
             web.get("/workflow-list", self.get_workflow_list),
+            web.get("/generation-count", self.get_generation_count),
             web.post("/upload/image", self.upload_image),
             web.post("/workflow-info", self.workflow_info),
         ])
+
+        await self.config_obj.load()
         return app
     
     async def track_progress(self, sid):
@@ -194,6 +200,9 @@ class BridgeServer():
         self.wf_info[sid] = prompt
         prompt = queue_prompt(prompt, sid, self.sid_server_map[sid])
 
+        self.config_obj.generation_count += 1
+        await self.config_obj.update()
+
         return web.Response(status=200)
     
     async def upload_image(self, request):
@@ -281,6 +290,10 @@ class BridgeServer():
         wf_list = os.listdir("./workflows")
         return web.Response(status=200, body=json.dumps(wf_list), content_type="application/json")
 
+    async def get_generation_count(self, request):
+        generation_count = self.config_obj.generation_count
+        return web.Response(status=200, body=json.dumps(generation_count), content_type="application/json")
+
     async def main_page(self, request):
         return web.Response(text="Hello, this is Favorfit Bridge Server!")
 
@@ -291,6 +304,7 @@ def main():
     servers_str = os.getenv('COMFYUI_SERVERS')
     host = os.getenv("HOST")
     port = os.getenv("PORT")
+    config_fn = os.getenv("CONFIG")
     logging_level = os.getenv("LOGGING_LEVEL", "INFO").upper()
 
     logging.basicConfig(level=getattr(logging, logging_level, logging.INFO),
@@ -300,7 +314,7 @@ def main():
     server_list = servers_str.split(',') if servers_str else []
 
     loop = asyncio.get_event_loop()
-    server = BridgeServer(loop, server_list)
+    server = BridgeServer(loop=loop, config_fn=config_fn, server_address=server_list)
     app = loop.run_until_complete(server.init_app())
     web.run_app(app, host=host, port=int(port))
     

@@ -1,4 +1,7 @@
-import os, json, io
+import os, json
+import aiofiles
+import json
+from asyncio import Lock
 import urllib
 import magic
 from requests_toolbelt import MultipartEncoder
@@ -19,6 +22,36 @@ def get_mime_type_from_binary(binary_data):
         mime_type = 'application/octet-stream'
     return mime_type
 
+# Manage json file
+class AsyncJsonWrapper:
+    def __init__(self, filename):
+        self.filename = filename
+        self.contents = None
+        self.lock = Lock()
+
+    async def load(self):
+        async with self.lock:
+            async with aiofiles.open(self.filename, 'r') as f:
+                data = await f.read()
+                self.contents = json.loads(data)
+
+    async def update(self):
+        async with self.lock:
+            async with aiofiles.open(self.filename, 'w') as f:
+                await f.write(json.dumps(self.contents, indent=4))
+
+    def __getattr__(self, name):
+        if self.contents and name in self.contents:
+            return self.contents[name]
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, name, value):
+        if name in ('filename', 'contents', 'lock'):
+            super().__setattr__(name, value)
+        else:
+            if self.contents is None:
+                self.contents = {}
+            self.contents[name] = value
 
 # API
 def queue_prompt(prompt, client_id, server_address):
