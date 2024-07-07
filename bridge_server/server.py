@@ -7,7 +7,6 @@ from socket_manager import SocketManager
 from urls import setup_routes
 from assistant import (queue_prompt,
                     get_history,
-                    delete_history,
                     get_queue_state,
                     get_parsed_input_nodes,
                     post_free_memory,
@@ -161,8 +160,8 @@ class BridgeServer():
             logging.error(f"[WS REQ] SERVER CONNECTION ERROR / {sid}")
             await self.socket_manager.async_send_json(sid, {"status":"error", "details":"server connection error"})
         except Exception as e:
-            logging.error(f"[WS] UNKNOWN ERROR / {sid}")
-            await self.socket_manager.async_send_json(sid, {"status":"error", "details":str(e)})
+            logging.error(f"[WS] UNKNOWN ERROR {str(e)}/ {sid}")
+            await self.socket_manager.async_send_json(sid, {"status":"error", "details":"internal server error"})
         finally:
             logging.info(f"[WS] CLOSING / {sid}")
 
