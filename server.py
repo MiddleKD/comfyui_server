@@ -475,7 +475,7 @@ class PromptServer():
                     extra_data["client_id"] = json_data["client_id"]
                 if valid[0]:
                     # prompt_id = str(uuid.uuid4())
-                    prompt_id = json_data["client_id"] # middlek
+                    prompt_id = json_data["client_id"] # comfyui_bridge_server (middlek)
 
                     outputs_to_execute = valid[2]
                     self.prompt_queue.put((number, prompt_id, prompt, extra_data, outputs_to_execute))
@@ -624,7 +624,7 @@ class PromptServer():
         elif sid in self.sockets:
             await send_socket_catch_exception(self.sockets[sid].send_json, message)
         elif sid not in self.sockets:
-            nodes.interrupt_processing() # middlek
+            nodes.interrupt_processing() # comfyui_bridge_server (middlek)
 
     def send_sync(self, event, data, sid=None):
         self.loop.call_soon_threadsafe(

@@ -2121,9 +2121,9 @@ export class ComfyApp {
 						title: node.title
 					};
 					
-					// Favorfitinput이 존재하고 길이가 0이 아닌 경우 추가
-					if (node.Favorfitinput && node.Favorfitinput.length > 0) {
-						node_data["_meta"].Favorfitinput = node.Favorfitinput; // middlek
+					// apiinput이 존재하고 길이가 0이 아닌 경우 추가
+					if (node.apiinput && node.apiinput.length > 0) {
+						node_data["_meta"].apiinput = node.apiinput; //  comfyui_bridge_server (middlek)
 					}
 				}
 
@@ -2355,7 +2355,7 @@ export class ComfyApp {
 			const node = LiteGraph.createNode(data.class_type);
 			node.id = isNaN(+id) ? id : +id;
 			node.title = data._meta?.title ?? node.title
-			node.Favorfitinput = data._meta?.Favorfitinput ?? node.Favorfitinput // middlek
+			node.apiinput = data._meta?.apiinput ?? node.apiinput // comfyui_bridge_server (middlek)
 			app.graph.add(node);
 		}
 

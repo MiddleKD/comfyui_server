@@ -1,6 +1,6 @@
 import os
 import aiohttp
-from ai_api import get_mime_type_from_binary
+from bridge_server.assistant import get_mime_type_from_binary
 
 import json
 

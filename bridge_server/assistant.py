@@ -110,26 +110,25 @@ def get_parsed_input_nodes(workflow_json):
     parsed_input_nodes = {}
 
     for node_number in workflow_json:
-        favorfit_inputs = []
+        api_inputs = []
 
         cur_node = workflow_json[node_number]
-        meta_data = cur_node["_meta"].get("Favorfitinput", None)
-        if meta_data is not None: favorfit_inputs.extend(meta_data.split(","))
-        # if "seed" in cur_node["inputs"].keys(): favorfit_inputs.append("seed")
+        meta_data = cur_node["_meta"].get("apiinput", None)
+        if meta_data is not None: api_inputs.extend(meta_data.split(","))
         
-        for favorfit_input in favorfit_inputs:
-            if favorfit_input is not None:
-                input_value = cur_node["inputs"].get(favorfit_input, None)
+        for api_input in api_inputs:
+            if api_input is not None:
+                input_value = cur_node["inputs"].get(api_input, None)
                 input_type = type(input_value)
 
                 if (input_type == None) or (input_value == ''):
-                    raise ValueError(f"{node_number}:{favorfit_input}, is wrong data('{input_type}', '{input_value}')")
+                    raise ValueError(f"{node_number}:{api_input}, is wrong data('{input_type}', '{input_value}')")
                 
-                parsed_input_nodes[f"{node_number}/{favorfit_input}"] = {
+                parsed_input_nodes[f"{node_number}/{api_input}"] = {
                     "type":input_type.__name__, 
                     "title":cur_node["_meta"]["title"], 
                     "class":cur_node["class_type"],
-                    "default":cur_node["inputs"][favorfit_input]
+                    "default":cur_node["inputs"][api_input]
                 }
     return parsed_input_nodes
     
@@ -154,7 +153,7 @@ def parse_workflow_prompt(workflow_path, **kwargs):
  
     return prompt
 
-def parse_outputs(outputs:dict):
+def parse_outputs(outputs:dict, root_dir):
     file_paths, mime_types, file_contents = [], [], []
 
     output_nodes = list(outputs.values())
@@ -164,7 +163,7 @@ def parse_outputs(outputs:dict):
                 if not isinstance(value, dict): continue
                 if value.get("filename", None) ==  None: continue
 
-                file_path = os.path.join("./output", value["filename"])
+                file_path = os.path.join(root_dir, "output", value["filename"])
                 if not os.path.isfile(file_path): continue
                 mime_type = get_mime_type(file_path)
                 with open(file_path, 'rb') as f:
@@ -178,7 +177,7 @@ def parse_outputs(outputs:dict):
 
 
 # File system
-def save_binary_file(data, file_name, directory='./input', return_root_dir=False):
+def save_binary_file(data, file_name, directory='../input', return_root_dir=False):
     # Ensure the directory exists
     if not os.path.exists(directory):
         os.makedirs(directory)

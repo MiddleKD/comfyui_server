@@ -3,7 +3,6 @@ import asyncio
 import aiohttp
 import aiofiles
 import magic
-from pathlib import Path
 
 server_address = "localhost:8000"
 
@@ -196,19 +195,18 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", default=server_address, type=str)
-    parser.add_argument("--wf_list", nargs='+', default=[], type=str)
+    parser.add_argument("--wfs", nargs='+', default=[], type=str)
     parser.add_argument("--test", action="store_true")
     args = parser.parse_args()
     
     server_address = args.url
     print(f"AI server address is '{server_address}'")
-    
-    workflow_dir = Path("./workflows")
 
     if args.test == True:
-        wf_list = [workflow_dir.joinpath(wf.name).as_posix() for wf in Path("./test_wf").iterdir()]
+        with open("test_wf_names.txt", mode="r") as f:
+            wf_list = [cur.strip() for cur in f.readlines()]
     else:
-        wf_list = [workflow_dir.joinpath(wf).as_posix() for wf in args.wf_list]
+        wf_list = args.wf_list
     
     ci_list = [str(uuid.uuid4()) for _ in range(len(wf_list))]
 
