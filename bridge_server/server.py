@@ -160,7 +160,7 @@ class BridgeServer():
             logging.error(f"[WS REQ] SERVER CONNECTION ERROR / {sid}")
             await self.socket_manager.async_send_json(sid, {"status":"error", "details":"server connection error"})
         except Exception as e:
-            logging.error(f"[WS] UNKNOWN ERROR {str(e)}/ {sid}")
+            logging.error(f"[WS] UNKNOWN ERROR / {str(e)} / {sid}")
             await self.socket_manager.async_send_json(sid, {"status":"error", "details":"internal server error"})
         finally:
             logging.info(f"[WS] CLOSING / {sid}")
