@@ -53,6 +53,19 @@ class AsyncJsonWrapper:
                 self.contents = {}
             self.contents[name] = value
 
+def make_workflow_alias_map(wf_dir, wf_alias_fn) -> dict:
+    with open(wf_alias_fn, mode="r") as f:
+        jsonlike = json.load(f)
+    
+    wf_alias_map = jsonlike
+    for cur in os.listdir(wf_dir):
+        if cur not in jsonlike.values():
+            wf_alias_map[cur] = cur
+        else:
+            continue
+    return wf_alias_map
+    
+
 # API
 def queue_prompt(prompt, client_id, server_address):
     p = {"prompt": prompt, "client_id": client_id}

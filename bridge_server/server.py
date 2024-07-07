@@ -13,6 +13,7 @@ from assistant import (queue_prompt,
                     parse_workflow_prompt,
                     parse_outputs,
                     save_binary_file,
+                    make_workflow_alias_map,
                     AsyncJsonWrapper)
 
 @web.middleware
@@ -32,6 +33,7 @@ class BridgeServer():
     def __init__(self, 
                  loop, 
                  state_fn:str,
+                 wf_alias_fn:str,
                  comfyui_dir:str,
                  wf_dir:str, 
                  server_address:list, 
@@ -48,6 +50,7 @@ class BridgeServer():
         self.upload_max_size = upload_max_size
 
         self.state_obj = AsyncJsonWrapper(state_fn)
+        self.wf_alias_map = make_workflow_alias_map(wf_dir, wf_alias_fn)
 
     async def init_app(self):
         app = web.Application(middlewares=[error_middleware], client_max_size=self.upload_max_size)
@@ -121,7 +124,7 @@ class BridgeServer():
 
     async def websocket_connection(self, request, mode):
         sid = request.rel_url.query.get('clientId', '')
-        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
+        if not isinstance(sid, str): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
         logging.info(f"[WS RES] RECEIVED / {sid}")
 
         session = None
@@ -211,9 +214,10 @@ class BridgeServer():
     async def generate_based_workflow(self, request):
         data = await request.json()
         sid = request.rel_url.query.get('clientId', '')
-        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
+        if not isinstance(sid, str): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
 
         workflow = data.pop("workflow", None)
+        workflow = self.wf_alias_map[workflow]
         kwargs = data
 
         prompt = parse_workflow_prompt(os.path.join(self.wf_dir, workflow), **kwargs)
@@ -263,7 +267,7 @@ class BridgeServer():
         
     async def get_history(self, request):
         sid = request.rel_url.query.get('clientId', '')
-        if not isinstance(sid, "str"): raise TypeError(f"clientId is must be str, but got {type(sid).__str__()}")
+        if not isinstance(sid, str): raise TypeError(f"clientId is must be str, but got {type(sid).__str__()}")
         
         server_address = self.socket_manager[sid].linked_server
         if server_address is None:
@@ -312,6 +316,7 @@ class BridgeServer():
     async def workflow_info(self, request):
         data = await request.json()
         workflow = data.pop("workflow", None)
+        workflow = self.wf_alias_map[workflow]
         node_info = get_parsed_input_nodes(os.path.join(self.wf_dir, workflow))
         return web.Response(status=200, body=json.dumps(node_info), content_type="application/json")
 
@@ -321,19 +326,19 @@ class BridgeServer():
     
     async def get_execution_info(self, request):
         sid = request.rel_url.query.get('clientId', '')
-        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
+        if not isinstance(sid, str): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
         execution_info = self.socket_manager[sid].execution_info
         return web.Response(status=200, body=json.dumps(execution_info), content_type="application/json")
 
     async def free_memory(self, request):
         sid = request.rel_url.query.get('clientId', '')
-        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be str, but got {type(sid).__str__()}")
+        if not isinstance(sid, str): raise TypeError(f"clientId is required and must be str, but got {type(sid).__str__()}")
 
         post_free_memory(self.socket_manager[sid].linked_server)
         return web.Response(status=200, body=json.dumps({"detail":f"server memory free now / {sid}"}), content_type="application/json")
 
     async def get_workflow_list(self, _):
-        wf_list = os.listdir("./workflows")
+        wf_list = list(self.wf_alias_map.keys())
         return web.Response(status=200, body=json.dumps(wf_list), content_type="application/json")
     
     async def main_page(self, _):

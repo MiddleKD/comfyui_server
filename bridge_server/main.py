@@ -20,6 +20,7 @@ async def main():
     host = os.getenv("HOST")
     port = os.getenv("PORT")
     state_fn = os.getenv("CURRENT_STATE")
+    wf_alias_fn = os.getenv("WORKFLOW_ALIAS")
     comfyui_dir = os.getenv("COMFYUI_DIR")
     wf_dir = os.getenv("WORKFLOW_DIR")
     limit_timeout_count = int(os.getenv("LIMIT_TIMEOUT_COUNT"))
@@ -36,6 +37,7 @@ async def main():
     loop = asyncio.get_event_loop()
     server = BridgeServer(loop=loop, 
                           state_fn=state_fn,
+                          wf_alias_fn=wf_alias_fn,
                           comfyui_dir=comfyui_dir,
                           wf_dir=wf_dir,
                           server_address=server_list,
