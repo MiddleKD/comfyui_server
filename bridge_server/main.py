@@ -3,15 +3,23 @@ import asyncio
 import logging
 from dotenv import load_dotenv
 from aiohttp import web
-from .server import BridgeServer
+from server import BridgeServer
 
-def main():
+async def run_app(app, host, port):
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host, port)
+    await site.start()
+    print(f"Server started at http://{host}:{port}")
+    await asyncio.Event().wait()
+
+async def main():
     load_dotenv()
     
     servers_str = os.getenv('COMFYUI_SERVERS')
     host = os.getenv("HOST")
     port = os.getenv("PORT")
-    config_fn = os.getenv("CURRENT_STATE")
+    state_fn = os.getenv("CURRENT_STATE")
     comfyui_dir = os.getenv("COMFYUI_DIR")
     wf_dir = os.getenv("WORKFLOW_DIR")
     limit_timeout_count = int(os.getenv("LIMIT_TIMEOUT_COUNT"))
@@ -27,16 +35,16 @@ def main():
 
     loop = asyncio.get_event_loop()
     server = BridgeServer(loop=loop, 
-                          config_fn=config_fn,
+                          state_fn=state_fn,
                           comfyui_dir=comfyui_dir,
                           wf_dir=wf_dir,
                           server_address=server_list,
                           limit_timeout_count=limit_timeout_count,
                           timeout_interval=timeout_interval,
                           upload_max_size=upload_max_size)
-    app = loop.run_until_complete(server.init_app())
-    web.run_app(app, host=host, port=int(port))
     
+    app = await server.init_app()
+    await run_app(app, host, int(port))
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

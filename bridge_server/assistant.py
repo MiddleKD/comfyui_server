@@ -78,8 +78,18 @@ def delete_history(client_id, server_address):
     request = urllib.request.Request(url, data=data, headers=headers, method='POST')
     with urllib.request.urlopen(request) as response:
         return response.status
-    
-def send_interrupt(server_address):
+
+def post_free_memory(server_address):
+    url = f"http://{server_address}/free/"
+    data = json.dumps({"unload_models": True, "free_memory":True}).encode('utf-8')
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    request = urllib.request.Request(url, data=data, headers=headers, method='POST')
+    with urllib.request.urlopen(request) as response:
+        return json.loads(response.read())
+
+def post_interrupt(server_address):
     url = f"http://{server_address}/interrupt/"
     request = urllib.request.Request(url, method='POST')
     with urllib.request.urlopen(request) as response:

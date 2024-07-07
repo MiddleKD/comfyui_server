@@ -3,16 +3,30 @@ import asyncio
 import aiohttp
 import logging
 from aiohttp import web
-from .urls import setup_routes
-from .assistant import (queue_prompt,
+from socket_manager import SocketManager
+from urls import setup_routes
+from assistant import (queue_prompt,
                     get_history,
                     delete_history,
                     get_queue_state,
                     get_parsed_input_nodes,
+                    post_free_memory,
                     parse_workflow_prompt,
                     parse_outputs,
                     save_binary_file,
                     AsyncJsonWrapper)
+
+@web.middleware
+async def error_middleware(request, handler):
+    try:
+        response = await handler(request)
+        return response
+    except Exception as e:
+        return web.Response(
+            status=400,
+            body=json.dumps({"detail":f"{e}"}),
+            content_type="application/json"
+        )
 
 class BridgeServer():
     
@@ -27,16 +41,6 @@ class BridgeServer():
                  upload_max_size:int=1024**2*100
                  ) -> None:
         self.loop = loop
-        self.lock = asyncio.Lock()
-
-        self.sockets_res = {}
-        self.sockets_req = {}
-        self.sid_server_map = {}
-        self.wf_info = {}
-        self.ws_connection_status = {}
-        self.execution_info = {}
-        self.history_life = {}
-
         self.comfyui_dir = comfyui_dir
         self.wf_dir = wf_dir
         self.server_address = server_address
@@ -47,54 +51,24 @@ class BridgeServer():
         self.state_obj = AsyncJsonWrapper(state_fn)
 
     async def init_app(self):
-        app = web.Application(client_max_size=self.upload_max_size)
+        app = web.Application(middlewares=[error_middleware], client_max_size=self.upload_max_size)
         setup_routes(app, self)
 
+        self.socket_manager = SocketManager(loop=self.loop, interval=self.timeout_interval, life_seconds=self.limit_timeout_count*self.timeout_interval)
         await self.state_obj.load()
-        return app
-    
-    async def update_dict(self, dict_name, key, value):
-        async with self.lock:
-            getattr(self, dict_name)[key] = value
-
-    async def get_from_dict(self, dict_name, key):
-        async with self.lock:
-            return getattr(self, dict_name).get(key, None)
-    
-    async def pop_from_dict(self, dict_name, key):
-        async with self.lock:
-            return getattr(self, dict_name).pop(key, None)
-    
-    async def run_from_dict(self, dict_name, key, function, *args, **kwargs):
-        async with self.lock:
-            dict_obj = getattr(self, dict_name)
-            value = dict_obj.get(key, None)
-        return await getattr(value, function)(*args, **kwargs)
         
-    async def manage_status_and_sending_message(self, sid, message):
-        if await self.get_from_dict("sockets_res", sid) is not None:
-            try:
-                await self.run_from_dict("sockets_res", sid, "send_json", message)
-                await self.update_dict("ws_connection_status", sid, message.get("status", "error"))
-                logging.debug(f"[WS RES] SEND OK / {message} / {sid}")
-
-            except Exception as err:
-                await self.update_dict("ws_connection_status", sid, "error")
-                logging.debug(f"[WS RES] SEND FAILED / {err} / {message} / {sid}")
-        else:
-            await self.update_dict("ws_connection_status", sid, message.get("status", "error"))
-        await self.update_dict("execution_info", sid, message)
-    
+        return app
+        
     async def track_progress(self, sid):
         total_progress = 0
         cur_progress = 0
 
         logging.info(f"[WS REQ] TRACING START / {sid}")
         while True:
-            out = await self.run_from_dict("sockets_req", sid, "receive")
+            out = await self.socket_manager.async_receive(sid)
             out = out.data
 
-            if await self.get_from_dict("ws_connection_status", sid) == "closed" or await self.get_from_dict("ws_connection_status", sid) == "error":
+            if self.socket_manager[sid].ws_connection_status in ["closed", "error"]:
                 break
 
             if isinstance(out, str):
@@ -103,7 +77,7 @@ class BridgeServer():
                 if message['type'] == 'execution_start':
                     logging.info(f"[WS REQ] EXECUTION START / {sid}")
 
-                    wf_info = await self.get_from_dict("wf_info", sid)
+                    wf_info = self.socket_manager[sid].wf_info
                     inputs_infos = [cur.get("inputs", None) for cur in wf_info.values()]
                     steps_list = [value for inputs_info in inputs_infos
                         for key, value in inputs_info.items()
@@ -113,7 +87,7 @@ class BridgeServer():
                         'status': 'progress',
                         'details': f'{cur_progress/total_progress*100:.2f}%'
                     }
-                    await self.manage_status_and_sending_message(sid, progress_message)
+                    await self.socket_manager.async_send_json(sid, progress_message)
                 
                 if message['type'] in ('progress', 'executing'):
                     data = message['data']
@@ -129,7 +103,7 @@ class BridgeServer():
                             'status': 'progress',
                             'details': f'{cur_progress/total_progress*100:.2f}%'
                         }
-                    await self.manage_status_and_sending_message(sid, progress_message)
+                    await self.socket_manager.async_send_json(sid, progress_message)
                     
                 if message['type'] == 'execution_cached':
                     logging.debug(f"[WS REQ] EXECUTION DONE / {sid}")
@@ -140,7 +114,7 @@ class BridgeServer():
                         'status': 'progress',
                         'details': f'{cur_progress/total_progress*100:.2f}%'
                     }
-                    await self.manage_status_and_sending_message(sid, progress_message)
+                    await self.socket_manager.async_send_json(sid, progress_message)
 
             else:
                 continue
@@ -148,6 +122,7 @@ class BridgeServer():
 
     async def websocket_connection(self, request, mode):
         sid = request.rel_url.query.get('clientId', '')
+        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
         logging.info(f"[WS RES] RECEIVED / {sid}")
 
         session = None
@@ -159,16 +134,16 @@ class BridgeServer():
                 pass
             else:
                 raise ValueError(f"websocket connection mode must be 'PROXY' or 'REST' but got '{mode}'")
-            await self.manage_status_and_sending_message(sid, {"status":"connected", "details":"web socket connected"})
+            await self.socket_manager.async_send_json(sid, {"status":"connected", "details":"web socket connected"})
 
             task = asyncio.create_task(self.track_progress(sid))
             if mode == "PROXY":
                 timeout_count = 0
                 while True:
-                    if await self.get_from_dict("ws_connection_status", sid) == "closed" or await self.get_from_dict("ws_connection_status", sid) == "error":
+                    if self.socket_manager[sid].ws_connection_status in ["closed", "error"]:
                         break
                     else:
-                        await self.run_from_dict("sockets_res", sid, "send_json", {"status":"listening", "details":"server is listening"})
+                        await self.socket_manager.async_send_json(sid, {"status":"listening", "details":"server is listening"}, update_life=False)
                         if timeout_count >= self.limit_timeout_count:
                             raise TimeoutError(f"timeout count: {timeout_count}")
                         timeout_count += 1
@@ -178,43 +153,36 @@ class BridgeServer():
 
         except aiohttp.ServerDisconnectedError as e:
             logging.warning(f"[WS RES] SERVER DISCONNECTED ERROR / {sid}")
-            await self.manage_status_and_sending_message(sid, {"status":"error", "details":"server disconnected"})
+            await self.socket_manager.async_send_json(sid, {"status":"error", "details":"server disconnected"})
         except TimeoutError as e:
             logging.warning(f"[WS RES] TIMEOUT ERROR / {sid}")
-            await self.manage_status_and_sending_message(sid, {"status":"error", "details":f"time out error: exceed {self.limit_timeout_count * self.timeout_interval}s"})
+            await self.socket_manager.async_send_json(sid, {"status":"error", "details":f"time out error: exceed {self.limit_timeout_count * self.timeout_interval}s"})
         except aiohttp.ServerConnectionError as e:
             logging.error(f"[WS REQ] SERVER CONNECTION ERROR / {sid}")
-            await self.manage_status_and_sending_message(sid, {"status":"error", "details":"server connection error"})
+            await self.socket_manager.async_send_json(sid, {"status":"error", "details":"server connection error"})
         except Exception as e:
             logging.error(f"[WS] UNKNOWN ERROR / {sid}")
-            await self.manage_status_and_sending_message(sid, {"status":"error", "details":str(e)})
+            await self.socket_manager.async_send_json(sid, {"status":"error", "details":str(e)})
         finally:
             logging.info(f"[WS] CLOSING / {sid}")
-            await self.manage_status_and_sending_message(sid, {"status":"closed", "details":"connection will be closed"})
 
-            if await self.get_from_dict("sockets_req", sid) is not None:
-                await self.run_from_dict("sockets_req", sid, "close")
-                await self.pop_from_dict("sockets_req", sid) 
-            if await self.get_from_dict("sockets_res", sid) is not None:
-                await self.run_from_dict("sockets_res", sid, "close")
-                await self.pop_from_dict("sockets_res", sid) 
+            await self.socket_manager.async_send_json(sid, {"status":"closed", "details":"connection will be closed"}, update_life=False)
+            await self.socket_manager.async_release_sockets(sid)
+     
             if session is not None:
                 await session.close()
-            
-            await self.pop_from_dict("ws_connection_status", sid) 
-            await self.pop_from_dict("wf_info", sid)
 
         return web.Response(text="Dummy response")
     
     async def _ws_res_connection(self, request, sid):
         ws_res = web.WebSocketResponse()
-        await self.update_dict("sockets_res", sid, ws_res)
-        await self.run_from_dict("sockets_res", sid, "prepare", request)
+        await ws_res.prepare(request)
+        self.socket_manager[sid].sockets_res = ws_res
         logging.info(f"[WS RES] HANDSHAKE / {sid}")
 
     async def _ws_req_connection(self, sid):
         server_address = await self.get_not_busy_server_address()
-        await self.update_dict("sid_server_map", sid, server_address)
+        self.socket_manager[sid].linked_server = server_address
         logging.debug(f"[WS REQ] server allocated to {server_address} / {sid}")
 
         session = aiohttp.ClientSession()
@@ -224,7 +192,7 @@ class BridgeServer():
         except Exception as e:
             raise aiohttp.ServerConnectionError
         finally:
-            await self.update_dict("sockets_req", sid, ws_req)
+            self.socket_manager[sid].sockets_req = ws_req
             return session
 
     async def get_not_busy_server_address(self):
@@ -244,17 +212,18 @@ class BridgeServer():
     async def generate_based_workflow(self, request):
         data = await request.json()
         sid = request.rel_url.query.get('clientId', '')
+        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
 
         workflow = data.pop("workflow", None)
         kwargs = data
 
         prompt = parse_workflow_prompt(os.path.join(self.wf_dir, workflow), **kwargs)
-        await self.update_dict("wf_info", sid, prompt)
+        self.socket_manager[sid].wf_info = prompt
 
-        if await self.get_from_dict("sockets_res", sid) is None:
+        if self.socket_manager[sid].sockets_res is None:
             asyncio.create_task(self.websocket_connection(request, mode="REST"))
         
-        prompt = queue_prompt(prompt, sid, await self.get_from_dict("sid_server_map", sid))
+        prompt = queue_prompt(prompt, sid, self.socket_manager[sid].linked_server)
 
         self.state_obj.generation_count += 1
         await self.state_obj.update()
@@ -295,8 +264,9 @@ class BridgeServer():
         
     async def get_history(self, request):
         sid = request.rel_url.query.get('clientId', '')
+        if not isinstance(sid, "str"): raise TypeError(f"clientId is must be str, but got {type(sid).__str__()}")
         
-        server_address = await self.get_from_dict("sid_server_map", sid)
+        server_address = self.socket_manager[sid].linked_server
         if server_address is None:
             return web.Response(
                 status=204,
@@ -325,9 +295,7 @@ class BridgeServer():
                 'Content-Type': writer.content_type,
             }
             
-            await self.pop_from_dict("sid_server_map", sid)
-            await self.pop_from_dict("execution_info", sid) 
-            delete_history(sid, server_address)
+            await self.socket_manager.async_delete(sid)
             logging.debug(f"[GET] '{request.path}' / DELETE HISTORY / {sid}")
 
             return web.Response(
@@ -347,19 +315,27 @@ class BridgeServer():
         workflow = data.pop("workflow", None)
         node_info = get_parsed_input_nodes(os.path.join(self.wf_dir, workflow))
         return web.Response(status=200, body=json.dumps(node_info), content_type="application/json")
-    
-    async def get_workflow_list(self, request):
-        wf_list = os.listdir("./workflows")
-        return web.Response(status=200, body=json.dumps(wf_list), content_type="application/json")
 
-    async def get_generation_count(self, request):
+    async def get_generation_count(self, _):
         generation_count = self.state_obj.generation_count
         return web.Response(status=200, body=json.dumps(generation_count), content_type="application/json")
     
     async def get_execution_info(self, request):
         sid = request.rel_url.query.get('clientId', '')
-        execution_info = await self.get_from_dict("execution_info", sid)
+        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be and str, but got {type(sid).__str__()}")
+        execution_info = self.socket_manager[sid].execution_info
         return web.Response(status=200, body=json.dumps(execution_info), content_type="application/json")
 
-    async def main_page(self, request):
+    async def free_memory(self, request):
+        sid = request.rel_url.query.get('clientId', '')
+        if not isinstance(sid, "str"): raise TypeError(f"clientId is required and must be str, but got {type(sid).__str__()}")
+
+        post_free_memory(self.socket_manager[sid].linked_server)
+        return web.Response(status=200, body=json.dumps({"detail":f"server memory free now / {sid}"}), content_type="application/json")
+
+    async def get_workflow_list(self, _):
+        wf_list = os.listdir("./workflows")
+        return web.Response(status=200, body=json.dumps(wf_list), content_type="application/json")
+    
+    async def main_page(self, _):
         return web.Response(text="Hello, this is ComfyUI Bridge Server! (made by middlek)")

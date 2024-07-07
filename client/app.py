@@ -206,7 +206,7 @@ if __name__ == "__main__":
         with open("test_wf_names.txt", mode="r") as f:
             wf_list = [cur.strip() for cur in f.readlines()]
     else:
-        wf_list = args.wf_list
+        wf_list = args.wfs
     
     ci_list = [str(uuid.uuid4()) for _ in range(len(wf_list))]
 
